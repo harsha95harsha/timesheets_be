@@ -3,11 +3,11 @@ const router = express.Router();
 const {
   login,
 
-  refreshToken
+  refreshToken,
 } = require("../controllers/authController");
 const {
   forgotPassword,
-  resetPassword
+  resetPassword,
 } = require("../controllers/userController");
 
 router.post("/api/login", login);

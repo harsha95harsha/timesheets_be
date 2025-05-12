@@ -13,8 +13,8 @@ const findUserById = async (user_sno) => {
 const findUserByEmail = async (user_email) => {
   return await db.User.findOne({
     where: {
-      user_email: user_email
-    }
+      user_email: user_email,
+    },
   });
 };
 
@@ -22,8 +22,8 @@ const findUserByName = async (user_name) => {
   try {
     return await db.User.findOne({
       where: {
-        user_name: user_name
-      }
+        user_name: user_name,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -38,7 +38,7 @@ const createSuperAdmin = async ({
   user_email,
   password,
   user_status,
-  is_super_admin
+  is_super_admin,
 }) => {
   const superAdmin = await db.User.create({
     user_id,
@@ -47,7 +47,7 @@ const createSuperAdmin = async ({
     user_email,
     password,
     user_status,
-    is_super_admin
+    is_super_admin,
   });
   return superAdmin;
 };
@@ -58,7 +58,7 @@ const createUser = async ({
   user_phone,
   user_email,
   password,
-  user_status = "ACTIVE" //default
+  user_status = "ACTIVE", //default
 }) => {
   const newUser = await db.User.create({
     user_id,
@@ -66,7 +66,7 @@ const createUser = async ({
     user_phone,
     user_email,
     password,
-    user_status
+    user_status,
   });
   return newUser;
 };
@@ -83,12 +83,12 @@ const updateUser = async (
       user_id,
       user_name,
       user_email,
-      user_phone
+      user_phone,
     },
     {
       where: {
-        user_sno: user_sno
-      }
+        user_sno: user_sno,
+      },
     }
   );
 
@@ -97,7 +97,7 @@ const updateUser = async (
     user_id,
     user_name,
     user_email,
-    user_phone
+    user_phone,
   };
 };
 const updateUserProfileByEmail = async (user_name, user_phone, user_email) => {
@@ -105,19 +105,19 @@ const updateUserProfileByEmail = async (user_name, user_phone, user_email) => {
     {
       user_name,
 
-      user_phone
+      user_phone,
     },
     {
       where: {
-        user_email: user_email
-      }
+        user_email: user_email,
+      },
     }
   );
   return {
     user_name,
 
     user_phone,
-    user_email
+    user_email,
   };
 };
 
@@ -134,12 +134,12 @@ const updateSuperAdminProfile = async (
       user_id,
       user_name,
 
-      user_phone
+      user_phone,
     },
     {
       where: {
-        user_sno: user_sno
-      }
+        user_sno: user_sno,
+      },
     }
   );
   return {
@@ -148,7 +148,7 @@ const updateSuperAdminProfile = async (
     user_name,
 
     user_phone,
-    user_email
+    user_email,
   };
 };
 const updateUserProfile = async (
@@ -160,12 +160,12 @@ const updateUserProfile = async (
   await db.User.update(
     {
       user_name,
-      user_phone
+      user_phone,
     },
     {
       where: {
-        user_sno: user_sno
-      }
+        user_sno: user_sno,
+      },
     }
   );
 
@@ -173,7 +173,7 @@ const updateUserProfile = async (
     user_sno,
     user_name,
     user_phone,
-    user_email
+    user_email,
   };
 };
 
@@ -181,12 +181,12 @@ const updateUserOTPByEmail = async (user_email, hashedOTPInfo) => {
   try {
     await db.User.update(
       {
-        user_otp: hashedOTPInfo
+        user_otp: hashedOTPInfo,
       },
       {
         where: {
-          user_email: user_email
-        }
+          user_email: user_email,
+        },
       }
     );
     console.log("OTP updated successfully in the database");
@@ -202,19 +202,19 @@ const updateUserPassword = async (user_sno, new_password) => {
     await db.User.update(
       { password: new_password },
       {
-        where: { user_sno: user_sno }
+        where: { user_sno: user_sno },
       }
     );
 
     return {
       success: true,
-      message: "Password updated successfully"
+      message: "Password updated successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Failed to update password"
+      message: "Failed to update password",
     };
   }
 };
@@ -225,26 +225,26 @@ const updateUserPasswordByEmail = async (user_email, new_password) => {
     await db.User.update(
       { password: hashedPassword },
       {
-        where: { user_email: user_email }
+        where: { user_email: user_email },
       }
     );
 
     return {
       success: true,
-      message: "Password updated successfully"
+      message: "Password updated successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Failed to update password"
+      message: "Failed to update password",
     };
   }
 };
 
 const deleteUser = async (user_sno) => {
   await db.User.destroy({
-    where: { user_sno: user_sno }
+    where: { user_sno: user_sno },
   });
 };
 
@@ -262,5 +262,5 @@ module.exports = {
   updateUserOTPByEmail,
   updateUserPassword,
   updateUserPasswordByEmail,
-  deleteUser
+  deleteUser,
 };
