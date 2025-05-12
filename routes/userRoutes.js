@@ -14,8 +14,8 @@ const {
 const { route } = require("./statusApiRoutes");
 
 router.get("/api/list/users", verifyjwt, getAllUsers);
-router.get("/api/list/logged_in_user_sno", verifyjwt, getLoggedInUserSno);
-router.get("/api/check/is_super_admin", verifyjwt, isSuperAdmin);
+router.get("/api/list/logged-in-user_sno", verifyjwt, getLoggedInUserSno);
+router.get("/api/check/is-super-admin", verifyjwt, isSuperAdmin);
 router.post("/api/create/super-admin", createSuperAdmin);
 // router.patch("/api/modify/super-admin", verifyjwt, resetSuperAdminPassword);
 router.post("/api/create/user", verifyjwt, createUser);

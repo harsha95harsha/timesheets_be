@@ -11,7 +11,7 @@ const {
 } = require("../controllers/profileController");
 
 router.put("/api/profile/:id", verifyjwt, editUserProfile);
-router.put("/api/superadmin/profile/:id", verifyjwt, editSuperAdminProfile);
+router.put("/api/super-admin/profile/:id", verifyjwt, editSuperAdminProfile);
 router.get("/api/fetch/user", verifyjwt, fetchLoggedInUser);
 router.put("/api/changepassword", verifyjwt, changePassword);
 

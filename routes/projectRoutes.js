@@ -18,7 +18,7 @@ router.get("/api/list/projects", verifyjwt, getAllProjects);
 //   verifyjwt,
 //   getUserProjectsOfLoggedInUser
 // );
-router.get("/api/list/projectdetails", verifyjwt, fetchProjectDetails);
+router.get("/api/list/project-details", verifyjwt, fetchProjectDetails);
 router.post("/api/create/project", verifyjwt, createProject);
 router.get("/api/list/project/:id", verifyjwt, getProjectById);
 router.put("/api/modify/project/:id", verifyjwt, updateProject);
