@@ -3,8 +3,9 @@ const User = require("../models/userModel");
 const Project = require("../models/projectModel");
 const UserProject = require("../models/userProjectModel");
 const UserTask = require("../models/userTaskModel");
+const Role = require("../models/roleModel");
 require("dotenv").config({
-  path: require("path").resolve(__dirname, "../environment/.env.local")
+  path: require("path").resolve(__dirname, "../environment/.env.local"),
 });
 
 console.log(
@@ -23,7 +24,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     dialect: "postgres",
-    logging: false
+    logging: false,
   }
 );
 
@@ -44,7 +45,7 @@ db.User = User(sequelize);
 db.Project = Project(sequelize);
 db.UserProject = UserProject(sequelize);
 db.UserTask = UserTask(sequelize);
-
+db.Role = Role(sequelize);
 db.sequelize = sequelize;
 // sync all models with database
 /*This checks what is the current state of the table in the database (which columns it has,

@@ -23,13 +23,31 @@ function projectModel(sequelize) {
         key: "user_sno",
       },
     },
+    created_by: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "User",
+        key: "user_sno",
+      },
+    },
+    updated_by: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "User",
+        key: "user_sno",
+      },
+    },
   };
 
   const options = {
     sequelize,
     modelName: "Project",
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   };
 
   const Project = sequelize.define("Project", attributes, options);

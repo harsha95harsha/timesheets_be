@@ -26,7 +26,7 @@ function userTaskModel(sequelize) {
         },
       },
 
-      task: {
+      task_name: {
         type: DataTypes.STRING(30),
         allowNull: false,
       },
@@ -34,17 +34,19 @@ function userTaskModel(sequelize) {
         type: DataTypes.STRING(200),
         allowNull: false,
       },
-      ut_status: {
+      task_status: {
         type: DataTypes.ENUM("draft", "pending", "approved", "rejected"),
       },
-      task_start_at: {
-        type: DataTypes.DATE,
+      no_of_hours: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
     {
       freezeTableName: true,
-      timestamps: false,
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 

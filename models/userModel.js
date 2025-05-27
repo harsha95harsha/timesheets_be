@@ -8,8 +8,11 @@ function userModel(sequelize) {
       autoIncrement: true,
       primaryKey: true,
     },
-    user_id: { type: DataTypes.STRING(10), allowNull: false },
-    user_name: { type: DataTypes.STRING(30), allowNull: false },
+    emp_id: { type: DataTypes.STRING(10), allowNull: false },
+    user_fullname: { type: DataTypes.STRING(30), allowNull: false },
+    user_firstname: { type: DataTypes.STRING(30), allowNull: false },
+    user_middlename: { type: DataTypes.STRING(30), allowNull: false },
+    user_lastname: { type: DataTypes.STRING(30), allowNull: false },
     user_phone: { type: DataTypes.STRING(10), allowNull: false },
     user_email: { type: DataTypes.STRING(100), allowNull: false },
     password: { type: DataTypes.STRING(200), allowNull: true },
@@ -24,13 +27,23 @@ function userModel(sequelize) {
       allowNull: false,
       defaultValue: false,
     },
+    role_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Role",
+        key: "role_id",
+      },
+    },
   };
 
   const options = {
     sequelize,
     modelName: "User",
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   };
 
   const User = sequelize.define("User", attributes, options);

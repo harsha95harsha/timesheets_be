@@ -30,10 +30,28 @@ function userProjectModel(sequelize) {
         allowNull: false,
         defaultValue: true,
       },
+      created_by: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "user_sno",
+        },
+      },
+      updated_by: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "user_sno",
+        },
+      },
     },
     {
       freezeTableName: true,
-      timestamps: false,
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
