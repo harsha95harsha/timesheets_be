@@ -148,6 +148,7 @@ async function fetchLoggedInUser(req, res) {
       } else {
         userDetails = {
           user_sno: user.user_sno,
+          user_id: user.user_id,
           user_name: user.user_name,
           user_phone: user.user_phone,
           user_email: user.user_email,
