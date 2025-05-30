@@ -137,41 +137,25 @@ async function fetchLoggedInUser(req, res) {
       });
     } else {
       let userDetails = {};
-      if (req.user.is_super_admin) {
-        userDetails = {
-          user_sno: user.user_sno,
-          emp_id: user.emp_id,
-          user_fullname: user.user_fullname,
-          user_firstname: user.user_firstname,
-          user_middlename: user.user_middlename,
-          user_lastname: user.user_lastname,
-          user_name: user.user_name,
-          user_phone: user.user_phone,
-          user_email: user.user_email,
-          user_status: user.user_status,
-          role: user.role,
-        };
-      } else {
-        userDetails = {
-          user_sno: user.user_sno,
-          emp_id: user.emp_id,
-          user_fullname: user.user_fullname,
-          user_firstname: user.user_firstname,
-          user_middlename: user.user_middlename,
-          user_lastname: user.user_lastname,
-          user_name: user.user_name,
-          user_phone: user.user_phone,
-          user_email: user.user_email,
-          user_status: user.user_status,
-          role: user.role,
-        };
-      }
-      return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        userDetails: userDetails,
-      });
+      userDetails = {
+        user_sno: user.user_sno,
+        emp_id: user.emp_id,
+        user_fullname: user.user_fullname,
+        user_firstname: user.user_firstname,
+        user_middlename: user.user_middlename,
+        user_lastname: user.user_lastname,
+        user_name: user.user_name,
+        user_phone: user.user_phone,
+        user_email: user.user_email,
+        user_status: user.user_status,
+        role: user.role,
+      };
     }
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      userDetails: userDetails,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
