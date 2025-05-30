@@ -32,22 +32,30 @@ const findUserByName = async (user_name) => {
 };
 
 const createSuperAdmin = async ({
-  user_id,
-  user_name,
+  emp_id,
+  user_fullname,
+  user_firstname,
+  user_middlename,
+  user_lastname,
   user_phone,
   user_email,
   password,
   user_status,
   is_super_admin,
+  role_id,
 }) => {
   const superAdmin = await db.User.create({
-    user_id,
-    user_name,
+    emp_id,
+    user_fullname,
+    user_firstname,
+    user_middlename,
+    user_lastname,
     user_phone,
     user_email,
     password,
     user_status,
     is_super_admin,
+    role_id,
   });
   return superAdmin;
 };

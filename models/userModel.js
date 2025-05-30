@@ -11,7 +11,7 @@ function userModel(sequelize) {
     emp_id: { type: DataTypes.STRING(10), allowNull: false },
     user_fullname: { type: DataTypes.STRING(30), allowNull: false },
     user_firstname: { type: DataTypes.STRING(30), allowNull: false },
-    user_middlename: { type: DataTypes.STRING(30), allowNull: false },
+    user_middlename: { type: DataTypes.STRING(30), allowNull: true },
     user_lastname: { type: DataTypes.STRING(30), allowNull: false },
     user_phone: { type: DataTypes.STRING(10), allowNull: false },
     user_email: { type: DataTypes.STRING(100), allowNull: false },
