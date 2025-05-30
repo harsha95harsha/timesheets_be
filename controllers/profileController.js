@@ -148,14 +148,15 @@ async function fetchLoggedInUser(req, res) {
         user_phone: user.user_phone,
         user_email: user.user_email,
         user_status: user.user_status,
-        role: user.role,
+        role: user.role_id,
       };
+
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        userDetails: userDetails,
+      });
     }
-    return res.status(200).json({
-      success: true,
-      statusCode: 200,
-      userDetails: userDetails,
-    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
