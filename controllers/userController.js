@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-async function getAllUsers(req, res) {
+async function getAllUsers(res) {
   try {
     var user = await userService.getAllUsers();
     if (!user) {

@@ -4,6 +4,7 @@ const Project = require("../models/projectModel");
 const UserProject = require("../models/userProjectModel");
 const UserTask = require("../models/userTaskModel");
 const Role = require("../models/roleModel");
+const Permission = require("../models/permissionModel");
 require("dotenv").config({
   path: require("path").resolve(__dirname, "../environment/.env.local"),
 });
@@ -37,29 +38,29 @@ const sequelize = new Sequelize(
   }
 })();
 
-// Test the connection
-// testConnection();
-
 const db = {};
+db.Permission = Permission(sequelize);
+db.Role = Role(sequelize);
 db.User = User(sequelize);
 db.Project = Project(sequelize);
 db.UserProject = UserProject(sequelize);
 db.UserTask = UserTask(sequelize);
-db.Role = Role(sequelize);
 db.sequelize = sequelize;
-// sync all models with database
-/*This checks what is the current state of the table in the database (which columns it has,
-  what are their data types, etc),
- and then performs the necessary changes in the table to make it match the model.*/
-// sequelize.sync({ alter: true });
+
+// Call associate methods if they exist
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
 sequelize
   .sync({ alter: true })
   .then(() => {
     console.log("All models were synchronized successfully.");
   })
   .catch((error) => {
-    console.error("Unable to sync models with the database:", error);
-    process.exit(1);
+    console.error("Error synchronizing models:", error);
   });
 
 module.exports = db;

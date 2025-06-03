@@ -1,18 +1,18 @@
 const { DataTypes } = require("sequelize");
 
-function roleModel(sequelize) {
+function permissionModel(sequelize) {
   const attributes = {
-    role_id: {
+    permission_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
     },
-    role_name: {
-      type: DataTypes.STRING(30),
+    permission_name: {
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
-    role_description: {
+    permission_description: {
       type: DataTypes.STRING(200),
       allowNull: false,
     },
@@ -20,29 +20,25 @@ function roleModel(sequelize) {
 
   const options = {
     sequelize,
-    modelName: "Role",
+    modelName: "Permission",
+    tableName: "permissions",
     freezeTableName: true,
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
   };
 
-  const Role = sequelize.define("Role", attributes, options);
+  const Permission = sequelize.define("Permission", attributes, options);
 
-  Role.associate = (models) => {
-    Role.hasMany(models.User, {
-      foreignKey: "role_id",
-      as: "users",
-    });
-
-    Role.belongsToMany(models.Permission, {
+  Permission.associate = (models) => {
+    Permission.belongsToMany(models.Role, {
       through: "role_permission_association",
-      foreignKey: "role_id",
-      otherKey: "permission_id",
+      foreignKey: "permission_id",
+      otherKey: "role_id",
     });
   };
 
-  return Role;
+  return Permission;
 }
 
-module.exports = roleModel;
+module.exports = permissionModel;

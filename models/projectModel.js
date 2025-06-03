@@ -19,24 +19,24 @@ function projectModel(sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User",
-        key: "user_sno",
+        model: "users",
+        key: "user_id",
       },
     },
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User",
-        key: "user_sno",
+        model: "users",
+        key: "user_id",
       },
     },
     updated_by: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User",
-        key: "user_sno",
+        model: "users",
+        key: "user_id",
       },
     },
   };
@@ -44,6 +44,7 @@ function projectModel(sequelize) {
   const options = {
     sequelize,
     modelName: "Project",
+    tableName: "projects",
     freezeTableName: true,
     timestamps: true,
     createdAt: "created_at",
@@ -52,8 +53,9 @@ function projectModel(sequelize) {
 
   const Project = sequelize.define("Project", attributes, options);
   Project.belongsTo(sequelize.models.User, {
+    targetTable: "users",
     foreignKey: "project_manager",
-    targetKey: "user_sno",
+    targetKey: "user_id",
     as: "manager",
   });
   return Project;
