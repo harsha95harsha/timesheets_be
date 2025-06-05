@@ -19,6 +19,19 @@ const permissions = [
   { id: 12, name: "delete_user", description: "Delete users" },
   { id: 13, name: "view_user", description: "View user details" },
 
+  // Project Assignment Permissions
+  { id: 14, name: "assign_project", description: "Assign projects to users" },
+  {
+    id: 15,
+    name: "unassign_project",
+    description: "Remove users from projects",
+  },
+  {
+    id: 16,
+    name: "view_project_assignments",
+    description: "View project assignments",
+  },
+
   // Report Permissions
   // { id: 18, name: "generate_report", description: "Generate reports" },
   // { id: 19, name: "view_report", description: "View reports" },
@@ -44,13 +57,13 @@ const roles = [
 ];
 
 const rolePermissions = {
-  // Admin has all permissions except task creation/editing/deletion
-  1: [1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 15, 16, 17, 21],
+  // Admin has all permissions
+  1: [1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21],
 
   // Project Manager permissions
-  2: [2, 4, 9, 15, 16, 17],
+  2: [2, 4, 9, 14, 15, 16],
   // User permissions
-  3: [4, 8, 14, 17],
+  3: [4, 8, 16],
 };
 
 module.exports = {
