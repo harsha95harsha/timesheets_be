@@ -95,36 +95,34 @@ const findUserProjectsByProjectSno = async (project_sno) => {
 const createUserProject = async ({
   user_sno,
   project_sno,
-  user_name,
-  project_name,
   is_active = true,
+  created_by = null,
+  updated_by = null,
 }) => {
   try {
     const user = await User.findOne({
       where: {
-        user_name: user_name,
+        user_sno: user_sno,
       },
     });
     const project = await Project.findOne({
       where: {
-        project_name: project_name,
+        project_sno: project_sno,
       },
     });
-    console.log(user);
-    console.log(project);
     if (!user) {
-      throw new Error(`User with name '${user_name}' not found`);
+      throw new Error(`User with user_sno '${user_sno}' not found`);
     }
     if (!project) {
-      throw new Error(`Project with name '${project_name}' not found`);
+      throw new Error(`Project with project_sno '${project_sno}' not found`);
     }
 
-    const newUserProject = await Project.create({
+    const newUserProject = await UserProject.create({
       user_sno,
       project_sno,
-      user_name: user.user_sno,
-      project_name: project.project_sno,
       is_active,
+      created_by,
+      updated_by,
     });
     return newUserProject;
   } catch (error) {
@@ -132,9 +130,16 @@ const createUserProject = async ({
   }
 };
 
-const updateUserProject = async ({ id, user_sno, project_sno }) => {
-  await db.UserProject.update(
-    { id, user_sno, project_sno },
+const updateUserProject = async ({
+  id,
+  user_sno,
+  project_sno,
+  is_active,
+  created_by = null,
+  updated_by = null,
+}) => {
+  await UserProject.update(
+    { id, user_sno, project_sno, is_active, created_by, updated_by },
     {
       where: {
         id: id,
@@ -142,7 +147,7 @@ const updateUserProject = async ({ id, user_sno, project_sno }) => {
     }
   );
 
-  return { id, user_sno, project_sno };
+  return { id, user_sno, project_sno, is_active, created_by, updated_by };
 };
 
 const deleteUserProject = async (id) => {

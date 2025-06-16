@@ -6,30 +6,25 @@ const getAllUserTasks = async () => {
       include: [
         {
           model: Project,
-          as: "project", // Alias for the project model to be associated with project_name
-          attributes: ["project_name"], // Only select user_name from project model
+          as: "project",
+          attributes: ["project_name"],
         },
         {
           model: User,
-          as: "user", // Alias for the project model to be associated with project_name
-          attributes: ["user_name"], // Only select user_name from project model
-        },
-        {
-          model: User,
-          as: "user", // Alias for the project model to be associated with project_name
-          attributes: ["user_email"], // Only select user_name from project model
+          as: "user",
+          attributes: ["user_fullname"],
         },
       ],
-
       attributes: [
         "ut_sno",
         "user_sno",
         "project_sno",
-
-        "task",
+        "task_name",
         "task_description",
-        "ut_status",
-        "task_start_at", // Include project_manager field
+        "task_status",
+        "no_of_hours",
+        "created_at",
+        "updated_at",
       ],
     });
     return userTasks;
@@ -50,23 +45,19 @@ const getTasksOfLoggedInUser = async (user_sno) => {
       {
         model: User,
         as: "user",
-        attributes: ["user_name"],
-      },
-      {
-        model: User,
-        as: "user",
-        attributes: ["user_email"],
+        attributes: ["user_fullname"],
       },
     ],
     attributes: [
       "ut_sno",
       "user_sno",
       "project_sno",
-
-      "task",
+      "task_name",
       "task_description",
-      "ut_status",
-      "task_start_at", // Include project_manager field
+      "task_status",
+      "no_of_hours",
+      "created_at",
+      "updated_at",
     ],
   });
 };
@@ -78,12 +69,7 @@ const findUserTaskById = async (ut_sno) => {
       {
         model: User,
         as: "user",
-        attributes: ["user_email"],
-      },
-      {
-        model: User,
-        as: "user",
-        attributes: ["user_name"],
+        attributes: ["user_fullname"],
       },
       {
         model: Project,
@@ -95,11 +81,12 @@ const findUserTaskById = async (ut_sno) => {
       "ut_sno",
       "user_sno",
       "project_sno",
-
-      "task",
+      "task_name",
       "task_description",
-      "ut_status",
-      "task_start_at", // Include project_manager field
+      "task_status",
+      "no_of_hours",
+      "created_at",
+      "updated_at",
     ],
   });
 };
@@ -107,19 +94,22 @@ const findUserTaskById = async (ut_sno) => {
 const createUserTask = async ({
   user_sno,
   project_sno,
-  task,
+  task_name,
   task_description,
-  ut_status,
-  task_start_at,
+  task_status = "draft",
+  no_of_hours,
+  created_at = null,
+  updated_at = null,
 }) => {
   const newUserTask = await db.UserTask.create({
     user_sno,
-
     project_sno,
-    task,
+    task_name,
     task_description,
-    ut_status,
-    task_start_at,
+    task_status,
+    no_of_hours,
+    created_at,
+    updated_at,
   });
   return newUserTask;
 };
@@ -128,19 +118,23 @@ const updateUserTask = async ({
   ut_sno,
   user_sno,
   project_sno,
-  task,
+  task_name,
   task_description,
-  ut_status,
-  task_start_at,
+  task_status,
+  no_of_hours,
+  created_at = null,
+  updated_at = null,
 }) => {
-  await db.UserTask.update(
+  await UserTask.update(
     {
       user_sno,
       project_sno,
-      task,
+      task_name,
       task_description,
-      ut_status,
-      task_start_at,
+      task_status,
+      no_of_hours,
+      created_at,
+      updated_at,
     },
     {
       where: {
@@ -153,10 +147,12 @@ const updateUserTask = async ({
     ut_sno,
     user_sno,
     project_sno,
-    task,
+    task_name,
     task_description,
-    ut_status,
-    task_start_at,
+    task_status,
+    no_of_hours,
+    created_at,
+    updated_at,
   };
 };
 

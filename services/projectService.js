@@ -12,7 +12,7 @@ const fetchProjects = async () => {
       include: {
         model: User,
         as: "manager",
-        attributes: ["user_name"],
+        attributes: ["user_fullname"],
       },
       attributes: [
         "project_sno",
@@ -20,6 +20,10 @@ const fetchProjects = async () => {
         "project_description",
         "project_status",
         "project_manager",
+        "created_by",
+        "updated_by",
+        "created_at",
+        "updated_at",
       ],
     });
 
@@ -28,10 +32,12 @@ const fetchProjects = async () => {
       project_name: project.project_name,
       project_description: project.project_description,
       project_status: project.project_status,
-      project_manager: project.manager ? project.manager.user_name : null,
+      project_manager: project.manager ? project.manager.user_fullname : null,
+      created_by: project.created_by,
+      updated_by: project.updated_by,
+      created_at: project.created_at,
+      updated_at: project.updated_at,
     }));
-
-    console.log(results);
 
     return results;
   } catch (err) {
@@ -52,27 +58,28 @@ const getProjectsByUserSno = async (user_sno) => {
 const createProject = async ({
   project_name,
   project_description,
-
   project_manager,
   project_status = "ACTIVE",
+  created_by = null,
+  updated_by = null,
 }) => {
   try {
     const user = await User.findOne({
       where: {
-        user_name: project_manager,
+        user_sno: project_manager,
       },
     });
-    console.log(user);
     if (!user) {
-      throw new Error(`User with name '${project_manager}' not found`);
+      throw new Error(`User with user_sno '${project_manager}' not found`);
     }
 
     const newProject = await Project.create({
       project_name,
       project_description,
-
       project_manager: user.user_sno,
       project_status,
+      created_by,
+      updated_by,
     });
     return newProject;
   } catch (error) {
@@ -86,23 +93,17 @@ const updateProject = async ({
   project_description,
   project_manager,
   project_status,
+  created_by = null,
+  updated_by = null,
 }) => {
   try {
     const user = await User.findOne({
-      // include: {
-      //   model: Project,
-      //   as: "manager", // Alias for the User model to be associated with project_manager
-      //   attributes: ["user_sno"],
-      // },
       where: {
-        user_name: project_manager,
+        user_sno: project_manager,
       },
     });
-    console.log(user);
-    console.log(user.user_name);
-
     if (!user) {
-      throw new Error(`User with name '${project_manager}' not found`);
+      throw new Error(`User with user_sno '${project_manager}' not found`);
     }
     await Project.update(
       {
@@ -110,6 +111,8 @@ const updateProject = async ({
         project_description,
         project_manager: user.user_sno,
         project_status,
+        created_by,
+        updated_by,
       },
       {
         where: {
@@ -124,6 +127,8 @@ const updateProject = async ({
       project_description,
       project_manager,
       project_status,
+      created_by,
+      updated_by,
     };
   } catch (error) {
     throw error;

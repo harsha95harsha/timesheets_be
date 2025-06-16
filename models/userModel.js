@@ -4,20 +4,36 @@ module.exports = (sequelize) => {
   const User = sequelize.define(
     "User",
     {
-      user_id: {
+      user_sno: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      first_name: {
-        type: DataTypes.STRING(50),
+      emp_id: {
+        type: DataTypes.STRING(10),
         allowNull: false,
       },
-      last_name: {
-        type: DataTypes.STRING(50),
+      user_fullname: {
+        type: DataTypes.STRING(30),
         allowNull: false,
       },
-      email: {
+      user_firstname: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+      },
+      user_middlename: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      user_lastname: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+      },
+      user_phone: {
+        type: DataTypes.STRING(15),
+        allowNull: false,
+      },
+      user_email: {
         type: DataTypes.STRING(100),
         allowNull: false,
         unique: true,
@@ -26,21 +42,24 @@ module.exports = (sequelize) => {
         },
       },
       password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
-      phone_number: {
-        type: DataTypes.STRING(20),
+      user_status: {
+        type: DataTypes.ENUM("ACTIVE", "INACTIVE"),
+        defaultValue: "ACTIVE",
+      },
+      user_otp: {
+        type: DataTypes.STRING(200),
         allowNull: true,
+      },
+      is_super_admin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       role_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: 3, // Default to USER role (role_id = 3)
-      },
-      status: {
-        type: DataTypes.ENUM("active", "inactive"),
-        defaultValue: "active",
+        allowNull: false,
       },
       created_at: {
         type: DataTypes.DATE,
@@ -52,7 +71,7 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "users",
+      tableName: "User",
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",

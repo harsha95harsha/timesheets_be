@@ -19,24 +19,24 @@ function projectModel(sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users",
-        key: "user_id",
+        model: "User",
+        key: "user_sno",
       },
     },
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users",
-        key: "user_id",
+        model: "User",
+        key: "user_sno",
       },
     },
     updated_by: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users",
-        key: "user_id",
+        model: "User",
+        key: "user_sno",
       },
     },
   };
@@ -53,9 +53,8 @@ function projectModel(sequelize) {
 
   const Project = sequelize.define("Project", attributes, options);
   Project.belongsTo(sequelize.models.User, {
-    targetTable: "users",
     foreignKey: "project_manager",
-    targetKey: "user_id",
+    targetKey: "user_sno",
     as: "manager",
   });
   return Project;

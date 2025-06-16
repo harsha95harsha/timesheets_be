@@ -18,11 +18,11 @@ const findUserByEmail = async (user_email) => {
   });
 };
 
-const findUserByName = async (user_name) => {
+const findUserByName = async (user_fullname) => {
   try {
     return await db.User.findOne({
       where: {
-        user_name: user_name,
+        user_fullname: user_fullname,
       },
     });
   } catch (error) {
@@ -40,8 +40,9 @@ const createSuperAdmin = async ({
   user_phone,
   user_email,
   password,
-  user_status,
-  is_super_admin,
+  user_status = "ACTIVE",
+  user_otp = null,
+  is_super_admin = true,
   role_id,
 }) => {
   const superAdmin = await db.User.create({
@@ -54,6 +55,7 @@ const createSuperAdmin = async ({
     user_email,
     password,
     user_status,
+    user_otp,
     is_super_admin,
     role_id,
   });
@@ -61,37 +63,40 @@ const createSuperAdmin = async ({
 };
 
 const createUser = async ({
-  user_id,
-  user_name,
+  emp_id,
+  user_fullname,
+  user_firstname,
+  user_middlename,
+  user_lastname,
   user_phone,
   user_email,
   password,
-  user_status = "ACTIVE", //default
+  user_status = "ACTIVE",
+  user_otp = null,
+  is_super_admin = false,
+  role_id,
 }) => {
   const newUser = await db.User.create({
-    user_id,
-    user_name,
+    emp_id,
+    user_fullname,
+    user_firstname,
+    user_middlename,
+    user_lastname,
     user_phone,
     user_email,
     password,
     user_status,
+    user_otp,
+    is_super_admin,
+    role_id,
   });
   return newUser;
 };
 
-const updateUser = async (
-  user_sno,
-  user_id,
-  user_name,
-  user_email,
-  user_phone
-) => {
+const updateUser = async (user_sno, userData) => {
   await db.User.update(
     {
-      user_id,
-      user_name,
-      user_email,
-      user_phone,
+      ...userData,
     },
     {
       where: {
@@ -100,20 +105,18 @@ const updateUser = async (
     }
   );
 
-  return {
-    user_sno,
-    user_id,
-    user_name,
-    user_email,
-    user_phone,
-  };
+  return { user_sno, ...userData };
 };
-const updateUserProfileByEmail = async (user_name, user_phone, user_email) => {
+
+const updateUserProfileByEmail = async (
+  user_fullname,
+  user_phone,
+  user_email
+) => {
   await db.User.update(
     {
-      user_name,
-
-      user_phone,
+      user_fullname: user_fullname,
+      user_phone: user_phone,
     },
     {
       where: {
@@ -122,27 +125,30 @@ const updateUserProfileByEmail = async (user_name, user_phone, user_email) => {
     }
   );
   return {
-    user_name,
-
-    user_phone,
-    user_email,
+    user_fullname: user_fullname,
+    user_phone: user_phone,
+    user_email: user_email,
   };
 };
 
 const updateSuperAdminProfile = async (
   user_sno,
-  user_id,
-  user_name,
-
+  emp_id,
+  user_fullname,
+  user_firstname,
+  user_middlename,
+  user_lastname,
   user_phone,
   user_email
 ) => {
   await db.User.update(
     {
-      user_id,
-      user_name,
-
+      user_fullname,
+      user_firstname,
+      user_middlename,
+      user_lastname,
       user_phone,
+      user_email,
     },
     {
       where: {
@@ -152,23 +158,27 @@ const updateSuperAdminProfile = async (
   );
   return {
     user_sno,
-    user_id,
-    user_name,
-
+    emp_id,
+    user_fullname,
+    user_firstname,
+    user_middlename,
+    user_lastname,
     user_phone,
     user_email,
   };
 };
+
 const updateUserProfile = async (
   user_sno,
-  user_name,
+  user_fullname,
   user_phone,
   user_email
 ) => {
   await db.User.update(
     {
-      user_name,
-      user_phone,
+      user_fullname: user_fullname,
+      user_phone: user_phone,
+      user_email: user_email,
     },
     {
       where: {
@@ -179,7 +189,7 @@ const updateUserProfile = async (
 
   return {
     user_sno,
-    user_name,
+    user_fullname,
     user_phone,
     user_email,
   };
@@ -226,6 +236,7 @@ const updateUserPassword = async (user_sno, new_password) => {
     };
   }
 };
+
 const updateUserPasswordByEmail = async (user_email, new_password) => {
   try {
     const hashedPassword = await bcrypt.hash(new_password, 10);
