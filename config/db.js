@@ -54,6 +54,9 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+// Create default roles
+db.Role.createDefaultRoles().catch(console.error);
+
 sequelize
   .sync({ alter: true })
   .then(() => {

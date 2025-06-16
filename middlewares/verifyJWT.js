@@ -12,7 +12,7 @@ const verifyjwt = (req, res, next) => {
       .json({ statusCode: 401, error: "Token not provided" });
   }
   try {
-    const decodedAccessToken = jwt.verify(token, "secret");
+    const decodedAccessToken = jwt.verify(token, secretKey);
     console.log(decodedAccessToken);
     req.user = decodedAccessToken;
     next();
@@ -21,11 +21,11 @@ const verifyjwt = (req, res, next) => {
     return res.status(403).json({
       statusCode: 403,
       error: "Failed to authenticate token",
-      message: error.message
+      message: error.message,
     });
   }
 };
 
 module.exports = {
-  verifyjwt
+  verifyjwt,
 };
