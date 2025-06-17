@@ -1,28 +1,26 @@
 const jwt = require("jsonwebtoken");
-const secretKey = process.env.ACCESS_TOKEN_SECRET;
+require("dotenv").config({
+  path: require("path").resolve(__dirname, "../environment/.env.local"),
+});
 
 // Middleware function to verify JWT token
-const verifyjwt = (req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+const verifyjwt = async (req, res, next) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const token = authHeader.split(" ")[1];
   console.log("token", token);
 
-  if (!token) {
-    return res
-      .status(401)
-      .json({ statusCode: 401, error: "Token not provided" });
-  }
   try {
-    const decodedAccessToken = jwt.verify(token, secretKey);
-    console.log(decodedAccessToken);
-    req.user = decodedAccessToken;
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded;
     next();
   } catch (error) {
-    console.error("JWT Error:", error.message);
-    return res.status(403).json({
-      statusCode: 403,
-      error: "Failed to authenticate token",
-      message: error.message,
-    });
+    console.log("JWT Error:", error.message);
+    return res.status(403).json({ message: "Forbidden" });
   }
 };
 

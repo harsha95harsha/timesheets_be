@@ -9,11 +9,12 @@ const generateToken = (user) => {
       user_sno: user.user_sno,
       user_name: user.user_name,
       user_email: user.user_email,
-      is_super_admin: user.is_super_admin
+      is_super_admin: user.is_super_admin,
+      role_id: user.role_id,
     },
     secretKey,
     {
-      expiresIn: "1d"
+      expiresIn: "1d",
     }
   );
   console.log("accessToken", accessToken);
@@ -22,7 +23,8 @@ const generateToken = (user) => {
       user_sno: user.user_sno,
       user_name: user.user_name,
       user_email: user.user_email,
-      is_super_admin: user.is_super_admin
+      is_super_admin: user.is_super_admin,
+      role_id: user.role_id,
     },
     refreshTokenSecret,
     { expiresIn: "1d" }
@@ -37,7 +39,8 @@ const refreshAccessToken = (refreshToken) => {
       user_sno: decodedRefreshToken.user_sno,
       user_name: decodedRefreshToken.user_name,
       user_email: decodedRefreshToken.user_email,
-      is_super_admin: decodedRefreshToken.is_super_admin
+      is_super_admin: decodedRefreshToken.is_super_admin,
+      role_id: decodedRefreshToken.role_id,
     };
     const accessToken = jwt.sign(user, secretKey, { expiresIn: "7d" });
     return accessToken;
@@ -48,5 +51,5 @@ const refreshAccessToken = (refreshToken) => {
 
 module.exports = {
   generateToken,
-  refreshAccessToken
+  refreshAccessToken,
 };

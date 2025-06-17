@@ -29,16 +29,8 @@ const sequelize = new Sequelize(
   }
 );
 
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("✅ Connected successfully!");
-  } catch (error) {
-    console.error("❌ Error connecting:", error);
-  }
-})();
-
 const db = {};
+
 db.Permission = Permission(sequelize);
 db.Role = Role(sequelize);
 db.User = User(sequelize);
@@ -54,11 +46,14 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-// Create default roles
-db.Role.createDefaultRoles().catch(console.error);
+// Create default roles and permissions
+db.Role.createDefaultRoles()
+  .then(() => db.Permission.createDefaultPermissions())
+  .catch(console.error);
 
+// Synchronize models with the database
 sequelize
-  .sync({ alter: true })
+  .sync({ force: false, alter: false })
   .then(() => {
     console.log("All models were synchronized successfully.");
   })

@@ -42,7 +42,7 @@ module.exports = (sequelize) => {
         },
       },
       password: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       user_status: {
@@ -60,6 +60,10 @@ module.exports = (sequelize) => {
       role_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "roles",
+          key: "role_id",
+        },
       },
       created_at: {
         type: DataTypes.DATE,
@@ -79,6 +83,12 @@ module.exports = (sequelize) => {
   );
 
   User.associate = (models) => {
+    // Association with Role
+    User.belongsTo(models.Role, {
+      foreignKey: "role_id",
+      as: "Role",
+    });
+
     // Association with Project (if exists)
     if (models.Project) {
       User.belongsToMany(models.Project, {

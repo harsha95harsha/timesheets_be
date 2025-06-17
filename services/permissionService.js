@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../config/db");
 
 class PermissionService {
   async hasPermission(roleId, permission) {
@@ -69,14 +69,14 @@ class PermissionService {
         include: [
           {
             model: db.Permission,
-            attributes: ["permission_name", "description"],
+            attributes: ["permission_name", "permission_description"],
           },
         ],
       });
 
       return rolePermissions.map((rp) => ({
         name: rp.Permission.permission_name,
-        description: rp.Permission.description,
+        description: rp.Permission.permission_description,
       }));
     } catch (error) {
       console.error("Error getting role permissions:", error);

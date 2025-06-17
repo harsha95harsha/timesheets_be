@@ -123,49 +123,52 @@ async function editSuperAdminProfile(req, res) {
   }
 }
 
-async function fetchLoggedInUser(req, res) {
+const fetchLoggedInUser = async (req, res) => {
   try {
-    // const logged_in_user_sno = req.user.user_sno;
-    const user_sno = req.user.user_sno;
+    console.log("Fetching user with user_sno:", req.user.user_sno);
 
-    const user = await userService.findUserById(user_sno);
+    const user = await userService.findUserById(req.user.user_sno);
+    console.log("Found user:", user);
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        statusCode: 404,
-        message: "User does not exist",
-      });
-    } else {
-      let userDetails = {};
-      userDetails = {
-        user_sno: user.user_sno,
-        emp_id: user.emp_id,
-        user_fullname: user.user_fullname,
-        user_firstname: user.user_firstname,
-        user_middlename: user.user_middlename,
-        user_lastname: user.user_lastname,
-        user_name: user.user_name,
-        user_phone: user.user_phone,
-        user_email: user.user_email,
-        user_status: user.user_status,
-        role: user.role_id,
-      };
-
-      return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        userDetails: userDetails,
+        message: "User not found",
       });
     }
+
+    const userDetails = {
+      user_sno: user.user_sno,
+      emp_id: user.emp_id,
+      user_fullname: user.user_fullname,
+      user_firstname: user.user_firstname,
+      user_middlename: user.user_middlename,
+      user_lastname: user.user_lastname,
+      user_phone: user.user_phone,
+      user_email: user.user_email,
+      user_status: user.user_status,
+      role_id: user.role_id,
+      role_name: user.Role ? user.Role.role_name : null,
+      role_description: user.Role ? user.Role.role_description : null,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "User details fetched successfully",
+      data: userDetails,
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Error in fetchLoggedInUser:", error);
+    console.error("Error stack:", error.stack);
     return res.status(500).json({
       success: false,
-      statusCode: 500,
       message: "Something went wrong, failed to check",
+      error: error.message,
     });
   }
-}
+};
 
 async function changePassword(req, res) {
   const { current_password, new_password, confirm_newpassword } = req.body;
@@ -199,6 +202,7 @@ async function changePassword(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
 module.exports = {
   editUserProfile,
   editSuperAdminProfile,

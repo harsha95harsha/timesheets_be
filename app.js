@@ -9,8 +9,10 @@ const userTaskRoutes = require("./routes/userTaskRoutes");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const statusApiRoutes = require("./routes/statusApiRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 const bodyParser = require("body-parser");
 const { verifyjwt } = require("./middlewares/verifyJWT");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 app.use(express.json());
 app.use(cors());
@@ -37,6 +39,8 @@ app.use("/", verifyjwt, userProjectRoutes);
 app.use("/", verifyjwt, profileRoutes);
 app.use("/", verifyjwt, userTaskRoutes);
 app.use("/", verifyjwt, statusApiRoutes);
+app.use("/", verifyjwt, analyticsRoutes);
+app.use("/", verifyjwt, dashboardRoutes);
 
 const port = process.env.PORT || 3001;
 

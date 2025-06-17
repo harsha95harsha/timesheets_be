@@ -52,11 +52,26 @@ function projectModel(sequelize) {
   };
 
   const Project = sequelize.define("Project", attributes, options);
+
+  // Add associations
   Project.belongsTo(sequelize.models.User, {
     foreignKey: "project_manager",
     targetKey: "user_sno",
     as: "manager",
   });
+
+  Project.belongsTo(sequelize.models.User, {
+    foreignKey: "created_by",
+    targetKey: "user_sno",
+    as: "creator",
+  });
+
+  Project.belongsTo(sequelize.models.User, {
+    foreignKey: "updated_by",
+    targetKey: "user_sno",
+    as: "updater",
+  });
+
   return Project;
 }
 

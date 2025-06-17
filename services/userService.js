@@ -1,32 +1,83 @@
 const { where } = require("sequelize");
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
+const { User, Role } = db;
 
 const getAllUsers = async () => {
-  return await db.User.findAll();
+  try {
+    const users = await User.findAll({
+      include: [
+        {
+          model: Role,
+          as: "Role",
+          attributes: ["role_name", "role_description"],
+        },
+      ],
+    });
+    return users;
+  } catch (error) {
+    console.error("Error in getAllUsers:", error);
+    throw error;
+  }
 };
 
 const findUserById = async (user_sno) => {
-  return await db.User.findByPk(user_sno);
+  try {
+    console.log("Finding user by ID:", user_sno);
+    const user = await User.findByPk(user_sno, {
+      include: [
+        {
+          model: Role,
+          as: "Role",
+          attributes: ["role_name", "role_description"],
+        },
+      ],
+    });
+    console.log("Found user with role:", user);
+    return user;
+  } catch (error) {
+    console.error("Error in findUserById:", error);
+    throw error;
+  }
 };
 
 const findUserByEmail = async (user_email) => {
-  return await db.User.findOne({
-    where: {
-      user_email: user_email,
-    },
-  });
+  try {
+    const user = await User.findOne({
+      where: {
+        user_email: user_email,
+      },
+      include: [
+        {
+          model: Role,
+          as: "Role",
+          attributes: ["role_name", "role_description"],
+        },
+      ],
+    });
+    return user;
+  } catch (error) {
+    console.error("Error in findUserByEmail:", error);
+    throw error;
+  }
 };
 
 const findUserByName = async (user_fullname) => {
   try {
-    return await db.User.findOne({
+    return await User.findOne({
       where: {
         user_fullname: user_fullname,
       },
+      include: [
+        {
+          model: Role,
+          as: "Role",
+          attributes: ["role_name", "role_description"],
+        },
+      ],
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error in findUserByName:", error);
     throw error;
   }
 };
@@ -45,7 +96,7 @@ const createSuperAdmin = async ({
   is_super_admin = true,
   role_id,
 }) => {
-  const superAdmin = await db.User.create({
+  const superAdmin = await User.create({
     emp_id,
     user_fullname,
     user_firstname,
@@ -76,7 +127,7 @@ const createUser = async ({
   is_super_admin = false,
   role_id,
 }) => {
-  const newUser = await db.User.create({
+  const newUser = await User.create({
     emp_id,
     user_fullname,
     user_firstname,
@@ -94,7 +145,7 @@ const createUser = async ({
 };
 
 const updateUser = async (user_sno, userData) => {
-  await db.User.update(
+  await User.update(
     {
       ...userData,
     },
@@ -113,7 +164,7 @@ const updateUserProfileByEmail = async (
   user_phone,
   user_email
 ) => {
-  await db.User.update(
+  await User.update(
     {
       user_fullname: user_fullname,
       user_phone: user_phone,
@@ -141,7 +192,7 @@ const updateSuperAdminProfile = async (
   user_phone,
   user_email
 ) => {
-  await db.User.update(
+  await User.update(
     {
       user_fullname,
       user_firstname,
@@ -174,7 +225,7 @@ const updateUserProfile = async (
   user_phone,
   user_email
 ) => {
-  await db.User.update(
+  await User.update(
     {
       user_fullname: user_fullname,
       user_phone: user_phone,
@@ -197,7 +248,7 @@ const updateUserProfile = async (
 
 const updateUserOTPByEmail = async (user_email, hashedOTPInfo) => {
   try {
-    await db.User.update(
+    await User.update(
       {
         user_otp: hashedOTPInfo,
       },
@@ -217,7 +268,7 @@ const updateUserOTPByEmail = async (user_email, hashedOTPInfo) => {
 
 const updateUserPassword = async (user_sno, new_password) => {
   try {
-    await db.User.update(
+    await User.update(
       { password: new_password },
       {
         where: { user_sno: user_sno },
@@ -241,7 +292,7 @@ const updateUserPasswordByEmail = async (user_email, new_password) => {
   try {
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
-    await db.User.update(
+    await User.update(
       { password: hashedPassword },
       {
         where: { user_email: user_email },
@@ -262,7 +313,7 @@ const updateUserPasswordByEmail = async (user_email, new_password) => {
 };
 
 const deleteUser = async (user_sno) => {
-  await db.User.destroy({
+  await User.destroy({
     where: { user_sno: user_sno },
   });
 };

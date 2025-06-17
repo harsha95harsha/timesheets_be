@@ -1,45 +1,56 @@
 const { DataTypes } = require("sequelize");
 
-function roleModel(sequelize) {
-  const attributes = {
-    role_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
+module.exports = (sequelize) => {
+  const Role = sequelize.define(
+    "Role",
+    {
+      role_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      role_name: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true,
+      },
+      role_description: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    role_name: {
-      type: DataTypes.STRING(30),
-      allowNull: false,
-    },
-    role_description: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
-    },
-  };
-
-  const options = {
-    sequelize,
-    modelName: "Role",
-    freezeTableName: true,
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-  };
-
-  const Role = sequelize.define("Role", attributes, options);
+    {
+      tableName: "roles",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    }
+  );
 
   Role.associate = (models) => {
+    // Association with User
     Role.hasMany(models.User, {
       foreignKey: "role_id",
       as: "users",
     });
 
-    Role.belongsToMany(models.Permission, {
-      through: "role_permission_association",
-      foreignKey: "role_id",
-      otherKey: "permission_id",
-    });
+    // Association with Permission (if exists)
+    if (models.Permission) {
+      Role.belongsToMany(models.Permission, {
+        through: "role_permission_association",
+        foreignKey: "role_id",
+        otherKey: "permission_id",
+        as: "permissions",
+      });
+    }
   };
 
   // Function to create default roles
@@ -76,6 +87,4 @@ function roleModel(sequelize) {
   };
 
   return Role;
-}
-
-module.exports = roleModel;
+};

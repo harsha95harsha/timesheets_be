@@ -162,6 +162,46 @@ const deleteUserTask = async (ut_sno) => {
   });
 };
 
+const getRecentTasks = async (page = 1, limit = 5) => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const tasks = await UserTask.findAll({
+      include: [
+        {
+          model: Project,
+          as: "project",
+          attributes: ["project_name"],
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_fullname"],
+        },
+      ],
+      attributes: [
+        "ut_sno",
+        "user_sno",
+        "project_sno",
+        "task_name",
+        "task_description",
+        "task_status",
+        "no_of_hours",
+        "created_at",
+        "updated_at",
+      ],
+      order: [["created_at", "DESC"]],
+      limit: limit,
+      offset: offset,
+    });
+
+    return tasks;
+  } catch (error) {
+    console.error("Error getting recent tasks:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getAllUserTasks,
   getTasksOfLoggedInUser,
@@ -169,4 +209,5 @@ module.exports = {
   createUserTask,
   updateUserTask,
   deleteUserTask,
+  getRecentTasks,
 };
