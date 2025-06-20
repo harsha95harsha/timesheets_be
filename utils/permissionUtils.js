@@ -32,9 +32,24 @@ const getUserPermissions = async (user) => {
   return permissionService.getRolePermissions(user.role_id);
 };
 
+const isAdmin = (user) => {
+  return user && user.role_id === 1;
+};
+
+const isProjectManager = (user) => {
+  return user && user.role_id === 2;
+};
+
+const isUser = (user) => {
+  return user && user.role_id === 3;
+};
+
 module.exports = {
   checkUserPermission,
   checkUserAnyPermission,
   checkUserAllPermissions,
   getUserPermissions,
+  isAdmin,
+  isProjectManager,
+  isUser,
 };

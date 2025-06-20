@@ -82,37 +82,6 @@ const findUserByName = async (user_fullname) => {
   }
 };
 
-const createSuperAdmin = async ({
-  emp_id,
-  user_fullname,
-  user_firstname,
-  user_middlename,
-  user_lastname,
-  user_phone,
-  user_email,
-  password,
-  user_status = "ACTIVE",
-  user_otp = null,
-  is_super_admin = true,
-  role_id,
-}) => {
-  const superAdmin = await User.create({
-    emp_id,
-    user_fullname,
-    user_firstname,
-    user_middlename,
-    user_lastname,
-    user_phone,
-    user_email,
-    password,
-    user_status,
-    user_otp,
-    is_super_admin,
-    role_id,
-  });
-  return superAdmin;
-};
-
 const createUser = async ({
   emp_id,
   user_fullname,
@@ -124,7 +93,6 @@ const createUser = async ({
   password,
   user_status = "ACTIVE",
   user_otp = null,
-  is_super_admin = false,
   role_id,
 }) => {
   const newUser = await User.create({
@@ -138,7 +106,6 @@ const createUser = async ({
     password,
     user_status,
     user_otp,
-    is_super_admin,
     role_id,
   });
   return newUser;
@@ -179,43 +146,6 @@ const updateUserProfileByEmail = async (
     user_fullname: user_fullname,
     user_phone: user_phone,
     user_email: user_email,
-  };
-};
-
-const updateSuperAdminProfile = async (
-  user_sno,
-  emp_id,
-  user_fullname,
-  user_firstname,
-  user_middlename,
-  user_lastname,
-  user_phone,
-  user_email
-) => {
-  await User.update(
-    {
-      user_fullname,
-      user_firstname,
-      user_middlename,
-      user_lastname,
-      user_phone,
-      user_email,
-    },
-    {
-      where: {
-        user_sno: user_sno,
-      },
-    }
-  );
-  return {
-    user_sno,
-    emp_id,
-    user_fullname,
-    user_firstname,
-    user_middlename,
-    user_lastname,
-    user_phone,
-    user_email,
   };
 };
 
@@ -323,10 +253,8 @@ module.exports = {
   findUserById,
   findUserByName,
   findUserByEmail,
-  createSuperAdmin,
   createUser,
   updateUser,
-  updateSuperAdminProfile,
   updateUserProfileByEmail,
   updateUserProfile,
   updateUserOTPByEmail,

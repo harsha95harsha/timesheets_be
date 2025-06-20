@@ -59,18 +59,18 @@ module.exports = (sequelize) => {
       const defaultRoles = [
         {
           role_id: 1,
-          role_name: "SUPER_ADMIN",
-          role_description: "Super Administrator with full system access",
+          role_name: "Admin",
+          role_description: "System Administrator",
         },
         {
           role_id: 2,
-          role_name: "ADMIN",
-          role_description: "Administrator with elevated privileges",
+          role_name: "PROJECT_MANAGER",
+          role_description: "Manager role for managing the projects and users",
         },
         {
           role_id: 3,
           role_name: "USER",
-          role_description: "Regular user with basic access",
+          role_description: "Employee role",
         },
       ];
 

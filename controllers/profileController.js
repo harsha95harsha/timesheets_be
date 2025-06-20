@@ -67,62 +67,6 @@ async function editUserProfile(req, res) {
   }
 }
 
-async function editSuperAdminProfile(req, res) {
-  try {
-    const user_sno = req.params.id;
-    const existingUser = await userService.findUserById(user_sno);
-    if (!existingUser) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "User does not exist",
-      });
-    }
-    await profileSchema.validateAsync(req.body);
-
-    if (req.user.user_email === process.env.EMAIL_USER && user_sno == 1) {
-      /**
-       * code for super admin updating his details
-       */
-      var updatedSuperAdmin = await userService.updateSuperAdminProfile(
-        user_sno,
-        req.body.user_id,
-        req.body.user_name,
-        req.body.user_phone,
-        req.user.user_email
-      );
-      console.log(updatedSuperAdmin);
-      return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        message: "You have successfully updated your details",
-        updatedSuperAdminProfile: updatedSuperAdmin,
-      });
-    } else {
-      return res.status(403).json({
-        success: false,
-        statusCode: 403,
-        message: "You cannot modify this user's details",
-      });
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    if (error.isJoi) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        error: error.details.map((detail) => detail.message),
-      });
-    } else {
-      return res.status(500).json({
-        success: false,
-        statusCode: 500,
-        message: "Something went wrong, failed to update your details",
-      });
-    }
-  }
-}
-
 const fetchLoggedInUser = async (req, res) => {
   try {
     console.log("Fetching user with user_sno:", req.user.user_sno);
@@ -205,7 +149,6 @@ async function changePassword(req, res) {
 
 module.exports = {
   editUserProfile,
-  editSuperAdminProfile,
   fetchLoggedInUser,
   changePassword,
 };

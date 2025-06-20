@@ -53,10 +53,6 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING(200),
         allowNull: true,
       },
-      is_super_admin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
       role_id: {
         type: DataTypes.INTEGER,
         allowNull: false,

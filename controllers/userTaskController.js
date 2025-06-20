@@ -1,11 +1,11 @@
 const userTaskService = require("../services/userTaskService");
 const userProjectService = require("../services/userProjectService");
-
 const userTaskSchema = require("../schemas/userTaskSchema");
+const { isAdmin } = require("../utils/permissionUtils");
 
 async function getAllUserTasks(req, res) {
   try {
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       var userTasks = await userTaskService.getAllUserTasks();
 
       console.log("All user task details", userTasks);
@@ -17,7 +17,7 @@ async function getAllUserTasks(req, res) {
         });
       }
 
-      console.log("the user tasks for superadmin: ", userTasks);
+      console.log("the user tasks for admin: ", userTasks);
       res.status(200).json({ success: true, userTasks: userTasks });
     }
   } catch (error) {
@@ -209,7 +209,7 @@ async function deleteUserTask(req, res) {
       });
     }
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       await userTaskService.deleteUserTask(req.params.id);
 
       return res.json({
@@ -221,7 +221,7 @@ async function deleteUserTask(req, res) {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can delete User Task",
+        message: "Only admin can delete User Task",
       });
     }
   } catch (error) {

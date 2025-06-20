@@ -2,6 +2,8 @@ const userProjectService = require("../services/userProjectService");
 const userProjectSchema = require("../schemas/userProjectSchema");
 const { Project, User, UserProject } = require("../config/db");
 const { getUserProjectsOfLoggedInUser } = require("./userTaskController");
+const { isAdmin } = require("../utils/permissionUtils");
+
 async function getAllUserProjects(req, res) {
   try {
     var userProjects = await userProjectService.getAllUserProjects();
@@ -33,7 +35,7 @@ async function createUserProject(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       var project = await Project.findOne({
         where: {
           project_sno: project_sno,
@@ -83,7 +85,7 @@ async function createUserProject(req, res) {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can create User Projects",
+        message: "Only admin can create User Projects",
       });
     }
   } catch (validationError) {
@@ -198,7 +200,7 @@ async function updateUserProject(req, res) {
       });
     }
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       const project = await Project.findOne({
         where: {
           project_sno: project_sno,
@@ -261,7 +263,7 @@ async function updateUserProject(req, res) {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can update User Projects",
+        message: "Only admin can update User Projects",
       });
     }
   } catch (validationError) {
@@ -301,7 +303,7 @@ async function deleteUserProject(req, res) {
         message: "Inactive User Project cannot be deleted",
       });
     }
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       await existingUserProject.update({ is_active: false });
       return res.json({
         success: true,
@@ -312,7 +314,7 @@ async function deleteUserProject(req, res) {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can delete User Project",
+        message: "Only admin can delete User Project",
       });
     }
   } catch (error) {

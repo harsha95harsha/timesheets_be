@@ -107,15 +107,19 @@ function permissionModel(sequelize) {
 
       // Associate permissions with roles
       for (const role of roles) {
-        if (role.role_name === "SUPER_ADMIN") {
-          // Super admin gets all permissions
+        if (role.role_name === "Admin") {
+          // Admin gets all permissions
           await role.setPermissions(permissions);
-        } else if (role.role_name === "ADMIN") {
-          // Admin gets all permissions except delete_user
-          const adminPermissions = permissions.filter(
-            (p) => p.permission_name !== "delete_user"
+        } else if (role.role_name === "PROJECT_MANAGER") {
+          // Project Manager gets project-related permissions and view permissions
+          const projectManagerPermissions = permissions.filter(
+            (p) =>
+              p.permission_name === "view_user" ||
+              p.permission_name === "view_project" ||
+              p.permission_name === "edit_project" ||
+              p.permission_name === "view_task"
           );
-          await role.setPermissions(adminPermissions);
+          await role.setPermissions(projectManagerPermissions);
         } else if (role.role_name === "USER") {
           // Regular users get view permissions and task CRUD permissions
           const userPermissions = permissions.filter(

@@ -19,7 +19,6 @@ const userSchema = Joi.object().keys({
     .max(50),
   user_status: Joi.string().valid("ACTIVE", "INACTIVE"),
   user_otp: Joi.string().max(200).allow(null, "").optional(),
-  is_super_admin: Joi.boolean(),
   role_id: Joi.number().required(),
   created_at: Joi.date().optional(),
   updated_at: Joi.date().optional(),

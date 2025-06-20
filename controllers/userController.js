@@ -3,9 +3,10 @@ const userSchema = require("../schemas/userSchema");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const { isAdmin } = require("../utils/permissionUtils");
 require("dotenv").config();
 
-async function getAllUsers(res) {
+async function getAllUsers(req, res) {
   try {
     var user = await userService.getAllUsers();
     if (!user) {
@@ -26,20 +27,19 @@ async function getAllUsers(res) {
   }
 }
 
-async function isSuperAdmin(req, res) {
+async function checkIsAdmin(req, res) {
   try {
-    const is_super_admin = req.user.is_super_admin;
-    if (!is_super_admin) {
+    const adminCheck = isAdmin(req.user);
+    if (!adminCheck) {
       return res.json({
         success: false,
-        // statusCode: 400,
-        message: "this user is not a super admin",
-        is_super_admin: is_super_admin,
+        message: "this user is not an admin",
+        is_admin: adminCheck,
       });
     }
     res
       .status(200)
-      .json({ success: true, statusCode: 200, is_super_admin: is_super_admin });
+      .json({ success: true, statusCode: 200, is_admin: adminCheck });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -83,53 +83,11 @@ function generateRandomPassword(length) {
   return password;
 }
 
-async function createSuperAdmin(req, res) {
-  try {
-    await userSchema.validateAsync(req.body);
-
-    const temp_password = generateRandomPassword(8);
-
-    const hashedPassword = await bcrypt.hash(temp_password, 10);
-
-    var superAdmin = await userService.createSuperAdmin({
-      ...req.body,
-      password: hashedPassword,
-    });
-    console.log(
-      `Temperory password is ${temp_password} \n Hashed password is ${hashedPassword}`
-    );
-
-    console.log(superAdmin);
-
-    res.status(200).json({
-      statusCode: 200,
-      success: true,
-      msg: "SuperAdmin created succesfully",
-      superAdmin: superAdmin,
-    });
-  } catch (validationError) {
-    if (validationError) {
-      console.error(validationError);
-      res.status(400).json({
-        success: false,
-        statusCode: 400,
-        error: validationError.details.map((detail) => detail.message),
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        statusCode: 500,
-        message: "Something went wrong, failed to create super admin",
-      });
-    }
-  }
-}
-
 async function createUser(req, res) {
   try {
-    console.log(req.user.is_super_admin);
+    console.log("User role_id:", req.user.role_id);
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       const existingUserEmail = await userService.findUserByEmail(
         req.body.user_email
       );
@@ -187,7 +145,7 @@ async function createUser(req, res) {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can create users",
+        message: "Only admin can create users",
       });
     }
   } catch (error) {
@@ -281,7 +239,7 @@ async function updateUser(req, res) {
 
     await userSchema.validateAsync(req.body);
 
-    if (req.user.is_super_admin) {
+    if (existingUser.role_id === 1) {
       /**
        * super admin can update/modify the user_name, phone number and email of the employees
        */
@@ -337,7 +295,7 @@ async function deleteUser(req, res) {
       });
     }
 
-    if (req.user.is_super_admin) {
+    if (existingUser.role_id === 1) {
       await existingUser.update({ user_status: "INACTIVE" });
       return res.json({
         success: true,
@@ -503,11 +461,10 @@ async function resetPassword(req, res) {
 module.exports = {
   getAllUsers,
   getLoggedInUserSno,
-  createSuperAdmin,
   createUser,
   getUserById,
   updateUser,
-  isSuperAdmin,
+  checkIsAdmin,
   deleteUser,
   forgotPassword,
   resetPassword,

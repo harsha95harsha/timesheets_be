@@ -3,6 +3,7 @@ const db = require("../config/db");
 const { Project, User } = db;
 const userProjectService = require("../services/userProjectService");
 const nodemailer = require("nodemailer");
+const { isAdmin } = require("../utils/permissionUtils");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
@@ -191,9 +192,9 @@ const withdrawTask = async (req, res) => {
 const approveTask = async (req, res) => {
   try {
     const ut_sno = req.params.id;
-    const isSuperAdmin = req.user.is_super_admin;
+    const isAdminUser = isAdmin(req.user);
 
-    if (isSuperAdmin) {
+    if (isAdminUser) {
       const task = await userTaskService.findUserTaskById(ut_sno);
       if (!task) {
         return res.status(404).json({ error: "Task not found" });
@@ -249,9 +250,9 @@ const approveTask = async (req, res) => {
 const rejectTask = async (req, res) => {
   try {
     const ut_sno = req.params.id;
-    const isSuperAdmin = req.user.is_super_admin;
+    const isAdminUser = isAdmin(req.user);
 
-    if (isSuperAdmin) {
+    if (isAdminUser) {
       const task = await userTaskService.findUserTaskById(ut_sno);
       if (!task) {
         return res.status(404).json({ error: "Task not found!" });

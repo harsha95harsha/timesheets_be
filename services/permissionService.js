@@ -8,6 +8,7 @@ class PermissionService {
         include: [
           {
             model: db.Permission,
+            as: "permission",
             where: { permission_name: permission },
           },
         ],
@@ -27,6 +28,7 @@ class PermissionService {
         include: [
           {
             model: db.Permission,
+            as: "permission",
             where: {
               permission_name: permissions,
             },
@@ -48,6 +50,7 @@ class PermissionService {
         include: [
           {
             model: db.Permission,
+            as: "permission",
             where: {
               permission_name: permissions,
             },
@@ -69,14 +72,15 @@ class PermissionService {
         include: [
           {
             model: db.Permission,
+            as: "permission",
             attributes: ["permission_name", "permission_description"],
           },
         ],
       });
 
       return rolePermissions.map((rp) => ({
-        name: rp.Permission.permission_name,
-        description: rp.Permission.permission_description,
+        name: rp.permission.permission_name,
+        description: rp.permission.permission_description,
       }));
     } catch (error) {
       console.error("Error getting role permissions:", error);

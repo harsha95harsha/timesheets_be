@@ -5,6 +5,7 @@ const UserProject = require("../models/userProjectModel");
 const UserTask = require("../models/userTaskModel");
 const Role = require("../models/roleModel");
 const Permission = require("../models/permissionModel");
+const RolePermission = require("../models/rolePermissionModel");
 require("dotenv").config({
   path: require("path").resolve(__dirname, "../environment/.env.local"),
 });
@@ -33,6 +34,7 @@ const db = {};
 
 db.Permission = Permission(sequelize);
 db.Role = Role(sequelize);
+db.RolePermission = RolePermission(sequelize);
 db.User = User(sequelize);
 db.Project = Project(sequelize);
 db.UserProject = UserProject(sequelize);

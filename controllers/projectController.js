@@ -2,6 +2,8 @@ const projectService = require("../services/projectService");
 const userProjectService = require("../services/userProjectService");
 const projectSchema = require("../schemas/projectSchema");
 const { Project } = require("../config/db");
+const { isAdmin, isProjectManager } = require("../utils/permissionUtils");
+
 async function getAllProjects(req, res) {
   try {
     var project = await projectService.getAllProjects();
@@ -10,7 +12,7 @@ async function getAllProjects(req, res) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: "The requested Project does not exist"
+        message: "The requested Project does not exist",
       });
     }
 
@@ -20,7 +22,7 @@ async function getAllProjects(req, res) {
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Something went wrong, failed to get the Projects list"
+      message: "Something went wrong, failed to get the Projects list",
     });
   }
 }
@@ -29,21 +31,21 @@ async function createProject(req, res) {
   try {
     await projectSchema.validateAsync(req.body);
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user) || isProjectManager(req.user)) {
       var createdProject = await projectService.createProject(req.body);
       console.log(createdProject);
       res.status(201).json({
         success: true,
         statusCode: 201,
         message: "Project created succesfully",
-        createdProject
+        createdProject,
       });
       console.log(createdProject);
     } else {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can create a Project"
+        message: "Only admin or project manager can create a Project",
       });
     }
   } catch (validationError) {
@@ -52,13 +54,13 @@ async function createProject(req, res) {
       res.status(400).json({
         success: false,
         statusCode: 400,
-        error: validationError.details.map((detail) => detail.message)
+        error: validationError.details.map((detail) => detail.message),
       });
     } else {
       res.status(500).json({
         success: false,
         statusCode: 500,
-        message: "Something went wrong, failed to create project"
+        message: "Something went wrong, failed to create project",
       });
     }
   }
@@ -71,7 +73,7 @@ async function getProjectById(req, res) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        error: "The requsted Project does not exist"
+        error: "The requsted Project does not exist",
       });
     }
     return res.status(200).json({ success: true, project: project });
@@ -79,7 +81,7 @@ async function getProjectById(req, res) {
     return res.status(500).json({
       success: false,
       statusCode: 500,
-      error: "Something went wrong, cannot get the requested Project"
+      error: "Something went wrong, cannot get the requested Project",
     });
   }
 }
@@ -93,7 +95,7 @@ async function updateProject(req, res) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        error: "Project does not exist"
+        error: "Project does not exist",
       });
     }
 
@@ -101,29 +103,29 @@ async function updateProject(req, res) {
       return res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Inactive Project cannot be modified"
+        message: "Inactive Project cannot be modified",
       });
     }
 
     await projectSchema.validateAsync(req.body);
 
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user) || isProjectManager(req.user)) {
       var updatedProject = await projectService.updateProject({
         ...req.body,
-        project_sno
+        project_sno,
       });
       console.log(updatedProject);
       return res.status(200).json({
         success: true,
         statusCode: 200,
         message: "The project is updated successfully",
-        updatedProject: updatedProject
+        updatedProject: updatedProject,
       });
     } else {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can update a Project"
+        message: "Only admin or project manager can update a Project",
       });
     }
   } catch (validationError) {
@@ -132,13 +134,13 @@ async function updateProject(req, res) {
       res.status(400).json({
         success: false,
         statusCode: 400,
-        error: validationError.details.map((detail) => detail.message)
+        error: validationError.details.map((detail) => detail.message),
       });
     } else {
       res.status(500).json({
         success: false,
         statusCode: 500,
-        message: "Something went wrong, failed to update the project"
+        message: "Something went wrong, failed to update the project",
       });
     }
   }
@@ -151,7 +153,7 @@ async function deleteProject(req, res) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        error: "Project does not exist"
+        error: "Project does not exist",
       });
     }
 
@@ -159,21 +161,21 @@ async function deleteProject(req, res) {
       return res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Inactive User Project cannot be deleted"
+        message: "Inactive User Project cannot be deleted",
       });
     }
-    if (req.user.is_super_admin) {
+    if (isAdmin(req.user)) {
       await existingProject.update({ project_status: "INACTIVE" });
       return res.json({
         success: true,
         statusCode: 200,
-        message: `Project with id: ${req.params.id} is deleted successfully`
+        message: `Project with id: ${req.params.id} is deleted successfully`,
       });
     } else {
       res.status(403).json({
         success: false,
         statusCode: 403,
-        message: "Only super admin can delete a Project"
+        message: "Only admin can delete a Project",
       });
     }
   } catch (error) {
@@ -189,7 +191,7 @@ async function fetchProjectDetails(req, res) {
 
     let userProjects = [];
 
-    if (loggedInUser.is_super_admin) {
+    if (isAdmin(req.user)) {
       userProjects = await projectService.fetchProjects();
       // userProjects = await userProjectService.getAllUserProjects();
     } else {
@@ -202,7 +204,7 @@ async function fetchProjectDetails(req, res) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: "There are no User Projects available to show"
+        message: "There are no User Projects available to show",
       });
     }
 
@@ -210,7 +212,7 @@ async function fetchProjectDetails(req, res) {
       userProjects.map(async (userProject) => {
         const { project_sno } = userProject;
         const projectDetails = await Project.findOne({
-          where: { project_sno }
+          where: { project_sno },
         });
 
         const projects = await projectService.fetchProjects();
@@ -224,7 +226,7 @@ async function fetchProjectDetails(req, res) {
             project_name: projectDetails.project_name,
             project_description: projectDetails.project_description,
             project_status: projectDetails.project_status,
-            project_manager: "Unknown"
+            project_manager: "Unknown",
           };
         }
 
@@ -233,7 +235,7 @@ async function fetchProjectDetails(req, res) {
           project_name: projectDetails.project_name,
           project_description: projectDetails.project_description,
           project_status: projectDetails.project_status,
-          project_manager: matchingProject.project_manager
+          project_manager: matchingProject.project_manager,
         };
       })
     );
@@ -245,14 +247,14 @@ async function fetchProjectDetails(req, res) {
 
     res.status(200).json({
       success: true,
-      projectsList: userProjectsWithDetails
+      projectsList: userProjectsWithDetails,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: "Something went wrong, failed to get the User Projects list"
+      message: "Something went wrong, failed to get the User Projects list",
     });
   }
 }
@@ -264,5 +266,5 @@ module.exports = {
   createProject,
   getProjectById,
   updateProject,
-  deleteProject
+  deleteProject,
 };

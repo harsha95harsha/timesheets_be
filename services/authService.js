@@ -9,7 +9,6 @@ const generateToken = (user) => {
       user_sno: user.user_sno,
       user_name: user.user_name,
       user_email: user.user_email,
-      is_super_admin: user.is_super_admin,
       role_id: user.role_id,
     },
     secretKey,
@@ -23,7 +22,6 @@ const generateToken = (user) => {
       user_sno: user.user_sno,
       user_name: user.user_name,
       user_email: user.user_email,
-      is_super_admin: user.is_super_admin,
       role_id: user.role_id,
     },
     refreshTokenSecret,
@@ -39,7 +37,6 @@ const refreshAccessToken = (refreshToken) => {
       user_sno: decodedRefreshToken.user_sno,
       user_name: decodedRefreshToken.user_name,
       user_email: decodedRefreshToken.user_email,
-      is_super_admin: decodedRefreshToken.is_super_admin,
       role_id: decodedRefreshToken.role_id,
     };
     const accessToken = jwt.sign(user, secretKey, { expiresIn: "7d" });
